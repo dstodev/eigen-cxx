@@ -9,3 +9,6 @@ void my::shear(my::point_t& point, float x_magnitude, float y_magnitude)
 
 	point = shear * point;
 }
+
+void my::link_symbol()
+{}

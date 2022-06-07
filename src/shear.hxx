@@ -10,6 +10,8 @@ typedef Eigen::Vector2f point_t;
 
 SHEAR_API void shear(point_t& point, float x_magnitude, float y_magnitude);
 
+SHEAR_API void link_symbol();
+
 }  // namespace my
 
 #endif

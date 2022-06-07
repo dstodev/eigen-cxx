@@ -18,3 +18,11 @@ add_google_executable(link_eigen TEST
 	LIBRARIES
 		Eigen3::Eigen
 )
+
+add_google_executable(link_shear TEST
+	SOURCES
+		link_shear.cxx
+
+	LIBRARIES
+		shear
+)
