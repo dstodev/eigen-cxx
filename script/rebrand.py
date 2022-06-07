@@ -1,7 +1,8 @@
 import re
+import sys
+from argparse import ArgumentParser
 from dataclasses import dataclass, field
 from pathlib import Path
-from argparse import ArgumentParser
 
 
 @dataclass
@@ -25,7 +26,7 @@ class Substitution:
 
 def main():
     cli = parse_program_arguments()
-
+    print(f"a| {cli.name} |a")
     root = Directory('..', [
         File('CMakeLists.txt',
              substitute=[
@@ -35,7 +36,7 @@ def main():
              remove_content=[op_label for (condition, op_label) in (
                  (cli.rm_tests, 'tests'),
                  (cli.rm_benchmarks, 'benchmarks'),
-                 (cli.rm_dependencies, 'dependencies')
+                 (cli.rm_windows, 'windows')
              ) if condition])
     ])
     process_directory(root)
@@ -46,16 +47,19 @@ def parse_program_arguments():
         from the host project to simplify it for use in another project by
         another name. It is carving a new project from a template project.
     ''')
+    parser.add_argument('name', metavar='project_name', nargs='?', help='Name of the new project')
+    parser.add_argument('lib', metavar='library_name', nargs='?', help='Name of the source library, none if omitted')
+    parser.add_argument('-a', '--all', action='store_true',
+                        help='Change only the project name. Supersedes all other options.')
+    parser.add_argument('-b', '--benchmarks', dest='rm_benchmarks', action='store_false')
+    parser.add_argument('-p', '--package', dest='rm_package', action='store_false')
+    parser.add_argument('-s', '--scripts', dest='rm_scripts', action='store_false')
+    parser.add_argument('-t', '--tests', dest='rm_tests', action='store_false')
+    parser.add_argument('-w', '--windows', dest='rm_windows', action='store_false')
 
-    parser.add_argument('name', metavar='project_name', help='Name of the new project')
-
-    parser.add_argument('-b', '--no-benchmarks', dest='rm_benchmarks', action='store_true')
-    parser.add_argument('-d', '--no-dependencies', dest='rm_dependencies', action='store_true')
-    parser.add_argument('-e', '--no-eigen-lib', dest='rm_entrypoint', action='store_true')
-    parser.add_argument('-p', '--no-packaging', dest='rm_packaging', action='store_true')
-    parser.add_argument('-s', '--no-scripts', dest='rm_scripts', action='store_true')
-    parser.add_argument('-t', '--no-tests', dest='rm_scripts', action='store_true')
-    parser.add_argument('-w', '--no-windows', dest='rm_windows', action='store_true')
+    if len(sys.argv) <= 1:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
 
     return parser.parse_args()
 
